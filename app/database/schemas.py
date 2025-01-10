@@ -1,13 +1,22 @@
-from typing import Optional
-
-from pydantic import BaseModel, EmailStr, validator, Field
+import datetime
+from typing import Optional, List
+from fastapi import UploadFile, File
+from pydantic import BaseModel, EmailStr, validator, Field, HttpUrl
 
 from utils import hashing
 
 
-class Token(BaseModel):
+class TokenSchema(BaseModel):
     access_token: str
-    token_type: str
+    refresh_token: str
+
+
+class TokenCreate(BaseModel):
+    user_id: str
+    access_token: str
+    refresh_token: str
+    status: bool
+    created_date: datetime.datetime
 
 
 class UserBase(BaseModel):
@@ -19,7 +28,18 @@ class UserBase(BaseModel):
         str_strip_whitespace = True
 
 
-# Model for user creation, extends UserBase and adds validation
+class ChangePassword(BaseModel):
+    email: str
+    old_password: str
+    new_password: str
+
+
+class UserWithPassword(BaseModel):
+    id: int
+    email: EmailStr
+    password: str
+
+
 class UserCreate(UserBase):
     password: str = Field("default_password123", description="The user's password")
     first_name: str = Field("John", description="The user's first name")
@@ -46,12 +66,28 @@ class UserCreate(UserBase):
         return value
 
 
-# Model for user response, excludes sensitive information like password
-class UserResponse(UserBase):
-    id: int
-    first_name: str
-    last_name: str
-    phone_number: Optional[str] = None
+class AnnouncementSchema(BaseModel):
+    title: str = Field(..., description="Title of the announcement")
+    category_id: int
+    photo: Optional[UploadFile] = File(None)
+    photo_url: Optional[HttpUrl] = None
+    description: Optional[str] = Field(None, description="Detailed description of the announcement")
+    location: Optional[str] = Field(None, description="Location of the announcement")
 
     class Config:
-        from_attributes = True  # Automatically maps attributes for ORM compatibility
+        orm_mode = True
+
+
+class CategoryCreate(BaseModel):
+    name: str = Field(..., description="Name of the category")
+
+
+class CategorySchemaWithCount(BaseModel):
+    id: int
+    name: str
+    announcements_count: int
+    announcements: Optional[List[AnnouncementSchema]] = Field(None,
+                                                              description="List of announcements under this category")
+
+    class Config:
+        orm_mode = True

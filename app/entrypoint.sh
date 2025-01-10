@@ -28,6 +28,7 @@ done
 alembic revision --autogenerate -m "create initial tables"
 
 echo "Running Alembic migrations..."
+
 alembic upgrade head
 
 # Start the Uvicorn server

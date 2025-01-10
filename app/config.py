@@ -5,6 +5,7 @@ class Settings(BaseSettings):
     app_name: str = "My FastAPI App"
     database_url: str
     secret_key: str
+    refresh_secret_key: str
 
     class Config:
         env_file = ".envs/.env"
