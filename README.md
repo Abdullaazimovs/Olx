@@ -1,4 +1,4 @@
-# OLX-like Platform with FastAPI, Docker, and JWT
+# OLX-like Platform with FastAPI, Docker, and JWT (In progress)
 
 This project is an OLX-like platform built using **FastAPI**, containerized with **Docker**, and using **JWT** for secure user authentication. It is designed to allow users to post, search, and manage listings, with a messaging feature for communication between buyers and sellers.
 
